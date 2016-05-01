@@ -1,44 +1,57 @@
 package assignment01;
 
 import java.util.LinkedHashMap;
+import java.util.WeakHashMap;
 
 public class ServiceProvider {
-	public LinkedHashMap<KeyPair<String, String>, String> classMap = new LinkedHashMap<>();
-	public LinkedHashMap<String, Class<?>> cache = new LinkedHashMap<>();
-	
-	public void registClass(String creator, String nick, String classPath) {
+	public static LinkedHashMap<KeyPair<String, String>, String> classMap = new LinkedHashMap<>();
+//	public WeakHashMap<String, WeakReference<Class<?>>> cache = new WeakHashMap<>();
+	public static WeakHashMap<String, Class<?>> cache = new WeakHashMap<>();
+
+	public static void registClass(String creator, String nick, String classPath) {
 		KeyPair<String, String> key = new KeyPair<>(creator, nick);
-		
-		if(!classMap.containsKey(key))
+
+		if (!classMap.containsKey(key))
 			classMap.put(key, classPath);
-		System.out.println(key.hashCode());
 	}
-	
-	public Object loadClass(String creator, String nick) {
+
+	public static Object loadClass(String creator, String nick) {
 		KeyPair<String, String> key = new KeyPair<>(creator, nick);
-		Object a = null;
-		
-		System.out.println(key.hashCode());
-		
-		if(!classMap.containsKey(key))
-			return a;
-		
 		String classPath = classMap.get(key);
-		try {
-			Class<?> klass = Class.forName(classPath);
-			 a = klass.newInstance();
-			
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+		Object a = null;
+
+		if (!classMap.containsKey(key))
+			return a;
+		else if (cache.containsKey(classPath)) {
+//			Class<?> klass = cache.get(classPath).get();
+			Class<?> klass = cache.get(classPath);
+			try {
+				a = klass.newInstance();
+			} catch (InstantiationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			try {
+				Class<?> klass = Class.forName(classPath);
+//				cache.put(classPath, new WeakReference<Class<?>>(klass));
+				cache.put(classPath, klass);
+				a = klass.newInstance();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InstantiationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
-		
 		return a;
 	}
 }
