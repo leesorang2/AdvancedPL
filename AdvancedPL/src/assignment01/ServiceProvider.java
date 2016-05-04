@@ -1,12 +1,11 @@
 package assignment01;
 
+import java.lang.ref.WeakReference;
 import java.util.LinkedHashMap;
-import java.util.WeakHashMap;
 
 public class ServiceProvider {
 	public static LinkedHashMap<KeyPair<String, String>, String> classMap = new LinkedHashMap<>();
-//	public WeakHashMap<String, WeakReference<Class<?>>> cache = new WeakHashMap<>();
-	public static WeakHashMap<String, Class<?>> cache = new WeakHashMap<>();
+	public static LinkedHashMap<String, WeakReference<Class<?>>> cache = new LinkedHashMap<>();
 
 	public static void registClass(String creator, String nick, String classPath) {
 		KeyPair<String, String> key = new KeyPair<>(creator, nick);
@@ -24,31 +23,24 @@ public class ServiceProvider {
 		if (!classMap.containsKey(key))
 			return a;
 		else if (cache.containsKey(classPath)) {
-//			Class<?> klass = cache.get(classPath).get();
-			Class<?> klass = cache.get(classPath);
+			Class<?> klass = cache.get(classPath).get();
 			try {
 				a = klass.newInstance();
 			} catch (InstantiationException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} else {
 			try {
 				Class<?> klass = Class.forName(classPath);
-//				cache.put(classPath, new WeakReference<Class<?>>(klass));
-				cache.put(classPath, klass);
+				cache.put(classPath, new WeakReference<Class<?>>(klass));
 				a = klass.newInstance();
 			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (InstantiationException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
