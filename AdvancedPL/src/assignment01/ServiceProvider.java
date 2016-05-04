@@ -6,7 +6,7 @@ import java.util.LinkedHashMap;
 public class ServiceProvider {
 	public static LinkedHashMap<KeyPair<String, String>, String> classMap = new LinkedHashMap<>();
 	public static LinkedHashMap<String, WeakReference<Class<?>>> cache = new LinkedHashMap<>();
-
+	
 	public static void registClass(String creator, String nick, String classPath) {
 		KeyPair<String, String> key = new KeyPair<>(creator, nick);
 
