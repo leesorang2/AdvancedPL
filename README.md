@@ -1,2 +1,2 @@
 # AdvancedPL
-CNU 2016 AdvancedPL Yeongcheol Kim
+2016 CNU AdvancedPL Yeongcheol Kim
